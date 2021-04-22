@@ -6,33 +6,42 @@ export default function Question1 (props) {
   // Feel free to use any (or no) external libraries you feel appropriate.
   // Endpoint docs: https://jsonplaceholder.typicode.com/guide/
 
-  const state = {
+  const [state, setState] = useState({
     title: '',
     body: '',
     userId: 1337,
-  }
-  const errormessage = '';
+  })
+  const [errormessage, setErrormessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    if (state.title.length < 0) {
-      errormessage = "You need to enter a title!"
-    }
-  }, [state.username]);
+    setErrormessage(state.title.length === 0 ? "You need to enter a title!" : '')
+  }, [state.title]);
 
   const handleSubmit = () => {
-    fetch('https://jsonplaceholder.typicode.com/posts',{
-      method: 'post',
-      data: JSON.toString({
-        title: state.title,
-        body: state.body,
-        userId: state.UserId
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then(response => response.json())
-      .then(json => console.log(json))
+    console.log(JSON.stringify(state))
+
+    if (errormessage === '') {
+      fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'post',
+        data: JSON.stringify(state),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      })
+          .then(response => response.json())
+          .then(json => console.log(json))
+          .then(() => setSuccessMessage('Submitted!'))
+    }
+    else {
+      setErrormessage('You need to enter a title before you can submit.')
+    }
+  }
+
+  const handleInput = (e) => {
+    setSuccessMessage('')
+    const {name, value} = e.target
+    setState({...state, [name]: value})
   }
 
   return (
@@ -41,21 +50,21 @@ export default function Question1 (props) {
         <div>
           Title:
         </div>
-        <input name={state.title}/>
+        <input name={'title'} onChange={handleInput}/>
       </div>
 
       <div>
         <div>
           Body:
         </div>
-        <input name={state.body}/>
+        <input name={'body'} onChange={handleInput}/>
       </div>
 
       <div>
         <div>
           UserId:
         </div>
-        <select name={state.userId}>
+        <select name={'userId'} onChange={handleInput}>
           <option>1337</option>
           <option>1234</option>
           <option>1066</option>
@@ -66,7 +75,11 @@ export default function Question1 (props) {
         {errormessage}
       </div>
 
-      <button onClick={handleSubmit()} style={{margin: 10}}>Submit</button>
+      <button onClick={handleSubmit} style={{margin: 10}}>Submit</button>
+
+      <div>
+        {successMessage}
+      </div>
     </div>
 
   )

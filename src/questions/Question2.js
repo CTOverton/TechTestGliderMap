@@ -16,9 +16,7 @@ export default function Question2 (props) {
     'Cheese'
   ];
 
-  const handleSearchTextChange = () => {
-
-  }
+  const handleSearchTextChange = (e) => setSearchText(e.target.value)
 
   return (
     <div>
@@ -26,7 +24,7 @@ export default function Question2 (props) {
       {shoppingList.map(item => {
         return (
           <div>
-            {item}
+            {item.toUpperCase().includes(searchText.toUpperCase()) && item}
           </div>
         )
       })}
